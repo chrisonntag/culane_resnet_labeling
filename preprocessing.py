@@ -46,19 +46,31 @@ def one_hot_encode(directory):
 def load_dataset(directory, file_mapping):
     photos, targets = list(), list()
 
+    # Search for *.jpg files in the directory and get mapping
     for dirpath, dirnames, filenames in os.walk(directory):
         for filename in [f for f in filenames if f.endswith(".jpg")]:
-            print(dirpath)
-            print(filename)
+            path = os.path.join(dirpath, filename)
 
-    """
-    for filename, tags in file_mapping:
-            photo = load_img(filename, target_size=(800,288))
+            # Scale image down to 800x288
+            photo = load_img(path, target_size=(800,288))
             photo = img_to_array(photo, dtype='uint8')
 
-            photos.append(photo)
-            targets.append(tags)
+            # Remove directory prefix
+            path = path[len(directory):]
+
+            if path in file_mapping.keys():
+                photos.append(photo)
+                targets.append(file_mapping[path])
+
     X = asarray(photos, dtype='uint8')
     y = asarray(targets, dtype='uint8')
     return X, y
-    """
+
+
+if __name__ == "__main__":
+    X, y = pp.load_dataset(FOLDER, mapping)
+    print(X.shape, y.shape)
+
+    # Save X, y into one compresses file
+    savez_compressed('culane.npz', X, y)
+

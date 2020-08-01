@@ -1,17 +1,15 @@
 import random
 import preprocessing as pp
+from numpy import savez_compressed
 import matplotlib.pyplot as plt
 from matplotlib.image import imread
 
 
-FOLDER = 'culane/'
-mapping = pp.one_hot_encode(FOLDER)
-
-def plot_examples():
+def plot_examples(file_mapping):
     example_images = []
     choices = [6123, 4010, 122, 910, 1997, 211, 23, 785, 3785] # 422 is the smallest of all categories
     for i in range(0, 9):
-        filtered_mapping = [(k, v) for k, v in mapping.items() if v[i] == 1]
+        filtered_mapping = [(k, v) for k, v in file_mapping.items() if v[i] == 1]
         if len(filtered_mapping) > 0:
             example_images.append(filtered_mapping[choices[i]])
 
@@ -33,5 +31,6 @@ def plot_examples():
     # show the figure
     plt.show()
 
-
-plot_examples()
+if __name__ == "__main__":
+    mapping = pp.one_hot_encode("culane/")
+    plot_examples(mapping)
