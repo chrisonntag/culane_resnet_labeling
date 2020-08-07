@@ -68,7 +68,9 @@ def load_dataset(directory, file_mapping):
 
 
 if __name__ == "__main__":
-    X, y = pp.load_dataset(FOLDER, mapping)
+    directory = "culane/"
+    mapping = one_hot_encode(directory)
+    X, y = load_dataset(directory, mapping)
     print(X.shape, y.shape)
 
     # Save X, y into one compresses file
