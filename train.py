@@ -1,3 +1,4 @@
+import sys
 from numpy import load
 from numpy import ones
 from numpy import asarray
@@ -105,15 +106,16 @@ def run_test_harness():
     # create data generator
     datagen = ImageDataGenerator(rescale=1.0/255.0)
     # prepare iterators
-    train_it = datagen.flow(trainX, trainY, batch_size=128)
-    test_it = datagen.flow(testX, testY, batch_size=128)
+    train_it = datagen.flow(trainX, trainY, batch_size=16)
+    test_it = datagen.flow(testX, testY, batch_size=16)
     # define model
     model = define_model()
     # fit model
-    history = model.fit_generator(train_it, steps_per_epoch=len(train_it),
-            validation_data=test_it, validation_steps=len(test_it), epochs=3, verbose=0)
+    history = model.fit(train_it, steps_per_epoch=len(train_it),
+                        validation_data=test_it, validation_steps=len(test_it),
+                        epochs=3, verbose=1)
     # evaluate model
-    loss, fbeta = model.evaluate_generator(test_it, steps=len(test_it), verbose=0)
+    loss, fbeta = model.evaluate_generator(test_it, steps=len(test_it), verbose=1)
     print('> loss=%.3f, fbeta=%.3f' % (loss, fbeta))
     # learning curves
     summarize_diagnostics(history)
