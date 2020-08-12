@@ -87,8 +87,8 @@ if __name__ == "__main__":
     datagen = ImageDataGenerator(rescale=1.0/255.0)
 
     # prepare iterators
-    train_it = datagen.flow(trainX, trainY, batch_size=16)
-    test_it = datagen.flow(testX, testY, batch_size=16)
+    train_it = datagen.flow(trainX, trainY, batch_size=8)
+    test_it = datagen.flow(testX, testY, batch_size=8)
 
     model = define_vgg_model()
     history = model.fit(train_it, steps_per_epoch=len(train_it),
