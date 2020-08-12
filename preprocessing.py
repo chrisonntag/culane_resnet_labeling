@@ -66,6 +66,16 @@ def load_dataset(directory, file_mapping):
     y = asarray(targets, dtype='uint8')
     return X, y
 
+def prepare_img(path):
+    img = load_img(path, target_size=(800,288))
+    img = img_to_array(img, dtype='uint8')
+    img = img.reshape(1, 800, 288, 3)
+
+    return img
+
+def pred_tags(y):
+    vals = y.round()
+    return [inv_labels_map[i] for i in range(len(vals)) if vals[i] == 1.0]
 
 if __name__ == "__main__":
     directory = "culane/"

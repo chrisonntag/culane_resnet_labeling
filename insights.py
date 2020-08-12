@@ -1,3 +1,4 @@
+import sys
 import random
 import preprocessing as pp
 from numpy import savez_compressed
@@ -30,6 +31,31 @@ def plot_examples(file_mapping):
         sp.set_title(label_name)
     # show the figure
     plt.show()
+
+def plot_history(history):
+    """
+    Plot the loss and accuracy using fbeta from a models history.
+    """
+    # plot loss
+    plt.subplot(211)
+    plt.title('Cross Entropy Loss')
+    plt.plot(history.history['loss'], color='blue', label='train')
+    plt.legend(loc="upper right")
+    plt.plot(history.history['val_loss'], color='orange', label='test')
+    plt.legend(loc="upper right")
+
+    # plot accuracy
+    plt.subplot(212)
+    plt.title('Fbeta')
+    plt.plot(history.history['fbeta'], color='blue', label='train')
+    plt.legend(loc="upper right")
+    plt.plot(history.history['val_fbeta'], color='orange', label='test')
+    plt.legend(loc="upper right")
+
+    filename = sys.argv[0].split('/')[-1]
+    plt.savefig(filename + '_plot.png')
+    plt.close()
+
 
 if __name__ == "__main__":
     mapping = pp.one_hot_encode("culane/")

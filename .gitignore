@@ -1,6 +1,8 @@
 culane/
+culane_model/
 env/
-culane.npz
+*.npz
+*.h5
 
 
 
