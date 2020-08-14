@@ -5,6 +5,7 @@ from numpy import asarray
 from matplotlib import pyplot
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import fbeta_score
+from sklearn.utils import shuffle
 from keras import backend
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
@@ -20,11 +21,14 @@ def load_dataset():
     # load dataset
     data = load('culane.npz')
     X, y = data['arr_0'], data['arr_1']
+    X_shuffled, y_shuffled = shuffle(X, y)
 
-    trainX, testX, trainY, testY = train_test_split(X, y, test_size=0.15, random_state=1)
-    print(trainX.shape, trainY.shape, testX.shape, testY.shape)
+    X_train, X_test, y_train, y_test = train_test_split(X_shuffled, y_shuffled,
+                                                    test_size=0.15,
+                                                    random_state=42)
+    print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
 
-    return trainX, trainY, testX, testY
+    return X_train, y_train, X_test, y_test
 
 # Keras version based on 
 # https://github.com/keras-team/keras/blob/4fa7e5d454dd4f3f33f1d756a2a8659f2e789141/keras/metrics.py#L134
@@ -80,15 +84,15 @@ if __name__ == "__main__":
 
     print("%d epochs will be trained" % epochs)
 
-    trainX, trainY, testX, testY = load_dataset()
+    X_train, y_train, X_test, y_test = load_dataset()
 
-    # create data generator
-    # TODO: describe use of
+    # create data generator in order to process images in batches and prevent
+    # Memory Errors.
     datagen = ImageDataGenerator(rescale=1.0/255.0)
 
     # prepare iterators
-    train_it = datagen.flow(trainX, trainY, batch_size=8)
-    test_it = datagen.flow(testX, testY, batch_size=8)
+    train_it = datagen.flow(X_train, y_train, batch_size=2)
+    test_it = datagen.flow(X_test, y_test, batch_size=2)
 
     model = define_vgg_model()
     history = model.fit(train_it, steps_per_epoch=len(train_it),
