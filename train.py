@@ -4,6 +4,7 @@ from numpy import ones
 from numpy import asarray
 from matplotlib import pyplot
 from sklearn.model_selection import train_test_split
+from dask_ml.model_selection import train_test_split as dask_train_test_split
 from sklearn.metrics import fbeta_score
 from sklearn.utils import shuffle
 from keras import backend
@@ -15,15 +16,15 @@ from keras.layers import Dense
 from keras.layers import Flatten
 from keras.optimizers import SGD
 import insights as stat
+import dask.array as da
 
 
 def load_dataset():
     # load dataset
     data = load('culane.npz')
     X, y = data['arr_0'], data['arr_1']
-    X_shuffled, y_shuffled = shuffle(X, y)
 
-    X_train, X_test, y_train, y_test = train_test_split(X_shuffled, y_shuffled,
+    X_train, X_test, y_train, y_test = dask_train_test_split(X, y,
                                                     test_size=0.15,
                                                     random_state=42)
     print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
