@@ -10,6 +10,7 @@ from keras.layers import MaxPooling2D
 from keras.layers import Dense
 from keras.layers import Flatten
 from keras.optimizers import SGD
+import preprocessing as pp
 import insights as stat
 from metrics import fbeta
 
@@ -54,7 +55,7 @@ def define_vgg_model(in_shape=(800, 288, 3), out_shape=9):
 if __name__ == "__main__":
     args = sys.argv
     epochs = 50
-    if (len(args) > 1):
+    if len(args) > 1:
         try:
             epochs = int(sys.argv[1])
         except ValueError as e:

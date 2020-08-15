@@ -1,5 +1,6 @@
 import os
 import os.path
+import pickle
 from os import listdir
 from numpy import zeros
 from numpy import asarray
@@ -15,6 +16,8 @@ label_names = ["test0_normal", "test1_crowd", "test2_hlight", "test3_shadow",
 labels_map = {label_names[i]:i for i in range(len(label_names))}
 inv_labels_map = {i:label_names[i] for i in range(len(label_names))}
 
+DIRECTORY = "culane/"
+
 
 # one-hot encoding the images in a dictionary
 def one_hot_encode(directory):
@@ -27,9 +30,11 @@ def one_hot_encode(directory):
                 count += 1
 
                 if len(img) > 5:
-                    end = img[-1:] # Remove newline char
+                    end = img[-1:]  # Remove newline char
                     if end == '\n':
                         img_name = img[:-1]
+                    else:
+                        img_name = img
                     img_name.strip()
                 else:
                     continue
@@ -43,33 +48,39 @@ def one_hot_encode(directory):
     return labels
 
 
-# load all images into memory
+def create_mapping():
+    mapping = one_hot_encode(DIRECTORY)
+
+    # Save mapping in a pickle file for later use
+    with open('one-hot-mapping.pickle', 'wb') as handle:
+        pickle.dump(mapping, handle)
+
+    return mapping
+
+
+# Match all available images and the according classes together.
 def load_dataset(directory, file_mapping):
-    photos, targets = list(), list()
+    imgs, labels = list(), list()
 
     # Search for *.jpg files in the directory and get mapping
     for dirpath, dirnames, filenames in os.walk(directory):
         for filename in [f for f in filenames if f.endswith(".jpg")]:
             path = os.path.join(dirpath, filename)
 
-            # Scale image down to 800x288
-            photo = load_img(path, target_size=(800,288))
-            photo = img_to_array(photo, dtype='uint8')
-
             # Remove directory prefix
-            path = path[len(directory):]
+            culane_path = path[len(directory):]
 
-            if path in file_mapping.keys():
-                photos.append(photo)
-                targets.append(file_mapping[path])
+            if culane_path in file_mapping.keys():
+                imgs.append(path)
+                labels.append(file_mapping[culane_path])
 
-    X = asarray(photos, dtype='uint8')
-    y = asarray(targets, dtype='uint8')
+    X = asarray(imgs)
+    y = asarray(labels, dtype='uint8')
     return X, y
 
 
 def prepare_img(path):
-    img = load_img(path, target_size=(800,288))
+    img = load_img(path, target_size=(800, 288))
     img = img_to_array(img, dtype='uint8')
     img = img.reshape(1, 800, 288, 3)
 
@@ -82,9 +93,9 @@ def pred_tags(y):
 
 
 if __name__ == "__main__":
-    directory = "culane/"
-    mapping = one_hot_encode(directory)
-    X, y = load_dataset(directory, mapping)
+    mapping = create_mapping()
+
+    X, y = load_dataset(DIRECTORY, mapping)
     print(X.shape, y.shape)
 
     # Save X, y into one compresses file
