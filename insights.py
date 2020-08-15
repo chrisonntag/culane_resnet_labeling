@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.image import imread
 
 
-def plot_examples(file_mapping):
+def plot_examples(file_mapping, folder):
     example_images = []
     choices = [6123, 4010, 122, 910, 1997, 211, 23, 785, 3785] # 422 is the smallest of all categories
     for i in range(0, 9):
@@ -21,7 +21,7 @@ def plot_examples(file_mapping):
     for i in range(0, len(example_images)):
         sp = fig.add_subplot(330 + 1 + i)
 
-        filename = FOLDER + example_images[i][0]
+        filename = folder + example_images[i][0]
         image = imread(filename)
         sp.imshow(image)
 
@@ -31,6 +31,7 @@ def plot_examples(file_mapping):
         sp.set_title(label_name)
     # show the figure
     plt.show()
+
 
 def plot_history(history):
     """
@@ -59,4 +60,4 @@ def plot_history(history):
 
 if __name__ == "__main__":
     mapping = pp.one_hot_encode("culane/")
-    plot_examples(mapping)
+    plot_examples(mapping, "culane/")
