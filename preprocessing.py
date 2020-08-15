@@ -48,6 +48,18 @@ def one_hot_encode(directory):
     return labels
 
 
+def one_hot_to_categorical(rows):
+    dest = dict()
+    for y in rows:
+        for i in range(0, len(y)):
+            if inv_labels_map[i] in dest.keys():
+                dest[inv_labels_map[i]].append(y[i])
+            else:
+                dest[inv_labels_map[i]] = [y[i]]
+
+    return dest
+
+
 def create_mapping():
     mapping = one_hot_encode(DIRECTORY)
 
