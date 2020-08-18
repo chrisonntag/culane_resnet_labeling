@@ -1,9 +1,8 @@
 import sys
-import random
 import preprocessing as pp
-from numpy import savez_compressed
 import matplotlib.pyplot as plt
 from matplotlib.image import imread
+from keras.utils.vis_utils import plot_model
 
 
 def plot_examples(file_mapping, folder):
@@ -56,6 +55,10 @@ def plot_history(history):
     filename = sys.argv[0].split('/')[-1]
     plt.savefig(filename + '_plot.png')
     plt.close()
+
+
+def visualize_model(model):
+    plot_model(model, to_file='model_plot.png', show_shapes=True)
 
 
 if __name__ == "__main__":

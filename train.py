@@ -4,8 +4,6 @@ import pandas as pd
 import multiprocessing
 from numpy import load
 from sklearn.model_selection import train_test_split
-from dask_ml.model_selection import train_test_split as dask_train_test_split
-from sklearn.utils import shuffle
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D
