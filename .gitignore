@@ -3,7 +3,7 @@ culane_model/
 env/
 *.npz
 *.h5
-
+config.cnf
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm+all

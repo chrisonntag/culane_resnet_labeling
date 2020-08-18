@@ -3,13 +3,27 @@ import os
 import pandas as pd
 import multiprocessing
 import models
+import configparser
 from numpy import load
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
-
 import preprocessing as pp
 import insights as stat
 from metrics import fbeta
+from dl_bot import DLBot
+from telegram_bot_callback import TelegramBotCallback
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+config = configparser.RawConfigParser()
+config.read(os.path.join(BASE_DIR, 'config.cnf'))
+
+telegram_token = config.get('telegram', 'token')
+telegram_user_id = config.get('telegram', 'user')
+
+bot = DLBot(token=telegram_token, user_id=telegram_user_id)
+telegram_callback = TelegramBotCallback(bot)
 
 
 def load_dataset():
@@ -69,7 +83,7 @@ if __name__ == "__main__":
     history = model.fit(train_it, steps_per_epoch=len(train_it),
                         validation_data=test_it, validation_steps=len(test_it),
                         epochs=epochs, verbose=1, use_multiprocessing=True,
-                        workers=multiprocessing.cpu_count())
+                        workers=multiprocessing.cpu_count(), callbacks=[telegram_callback])
     model.save('culane_model')
 
     loss, fbeta = model.evaluate(test_it, steps=len(test_it), verbose=1)
