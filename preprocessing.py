@@ -8,13 +8,12 @@ from numpy import savez_compressed
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 
-
 label_names = ["test0_normal", "test1_crowd", "test2_hlight", "test3_shadow",
-             "test4_noline", "test5_arrow", "test6_curve", "test7_cross",
-             "test8_night"]
+               "test4_noline", "test5_arrow", "test6_curve", "test7_cross",
+               "test8_night"]
 
-labels_map = {label_names[i]:i for i in range(len(label_names))}
-inv_labels_map = {i:label_names[i] for i in range(len(label_names))}
+labels_map = {label_names[i]: i for i in range(len(label_names))}
+inv_labels_map = {i: label_names[i] for i in range(len(label_names))}
 
 DIRECTORY = "culane/"
 
@@ -112,4 +111,3 @@ if __name__ == "__main__":
 
     # Save X, y into one compresses file
     savez_compressed('culane.npz', X, y)
-

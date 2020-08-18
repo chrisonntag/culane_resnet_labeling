@@ -22,8 +22,8 @@ def load_dataset():
     X, y = data['arr_0'], data['arr_1']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                    test_size=0.15,
-                                                    random_state=42)
+                                                        test_size=0.15,
+                                                        random_state=42)
     print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
 
     return X_train, y_train, X_test, y_test
@@ -31,7 +31,8 @@ def load_dataset():
 
 def define_vgg_model(in_shape=(800, 288, 3), out_shape=9):
     model = Sequential()
-    model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=in_shape))
+    model.add(
+        Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same', input_shape=in_shape))
     model.add(Conv2D(32, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     model.add(MaxPooling2D((2, 2)))
     model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
@@ -79,7 +80,7 @@ if __name__ == "__main__":
 
     # create data generator in order to process images in batches and prevent
     # Memory Errors.
-    datagen = ImageDataGenerator(rescale=1.0/255.0)
+    datagen = ImageDataGenerator(rescale=1.0 / 255.0)
 
     # prepare iterators
     abs_path = os.path.dirname(os.path.abspath(__file__))
@@ -103,4 +104,3 @@ if __name__ == "__main__":
     print('> loss=%.3f, fbeta=%.3f' % (loss, fbeta))
 
     stat.plot_history(history)
-
