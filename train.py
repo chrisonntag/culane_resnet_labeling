@@ -20,7 +20,7 @@ config = configparser.RawConfigParser()
 config.read(os.path.join(BASE_DIR, 'config.cnf'))
 
 telegram_token = config.get('telegram', 'token')
-telegram_user_id = config.get('telegram', 'user')
+telegram_user_id = config.getint('telegram', 'user')
 
 bot = DLBot(token=telegram_token, user_id=telegram_user_id)
 telegram_callback = TelegramBotCallback(bot)
