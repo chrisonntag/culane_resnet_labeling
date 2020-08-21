@@ -1,6 +1,36 @@
 import sys
 import os
 import pandas as pd
+import tensorflow as tf
+
+
+os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = "true"
+os.environ["CUDA_VISIBLE_DEVICES"] = '0' # Set to -1 if CPU should be used CPU = -1 , GPU = 0
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+cpus = tf.config.experimental.list_physical_devices('CPU')
+
+if gpus:
+    try:
+        # Currently, memory growth needs to be the same across GPUs
+        for gpu in gpus:
+            # Allow the GPU to grow memory dynamically and not allocate at the beginning
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+        print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+    except RuntimeError as e:
+        # Memory growth must be set before GPUs have been initialized
+        print(e)
+elif cpus:
+    try:
+        # Currently, memory growth needs to be the same across GPUs
+        logical_cpus= tf.config.experimental.list_logical_devices('CPU')
+        print(len(cpus), "Physical CPU,", len(logical_cpus), "Logical CPU")
+    except RuntimeError as e:
+        # Memory growth must be set before GPUs have been initialized
+        print(e)
+
+
 import multiprocessing
 import models
 import configparser
@@ -22,8 +52,8 @@ config.read(os.path.join(BASE_DIR, 'config.cnf'))
 telegram_token = config.get('telegram', 'token')
 telegram_user_id = config.getint('telegram', 'user')
 
-bot = DLBot(token=telegram_token, user_id=telegram_user_id)
-telegram_callback = TelegramBotCallback(bot)
+# bot = DLBot(token=telegram_token, user_id=telegram_user_id)
+#telegram_callback = TelegramBotCallback(bot)
 
 
 def load_dataset():
@@ -32,7 +62,7 @@ def load_dataset():
     X, y = data['arr_0'], data['arr_1']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                        test_size=0.15,
+                                                        test_size=0.2,
                                                         random_state=42)
     print(X_train.shape, y_train.shape, X_test.shape, y_test.shape)
 
@@ -63,6 +93,7 @@ if __name__ == "__main__":
 
     print(df_train.head())
 
+    
     # create data generator in order to process images in batches and prevent
     # Memory Errors.
     train_datagen = ImageDataGenerator(rescale=1.0 / 255.0, horizontal_flip=True)
@@ -72,18 +103,17 @@ if __name__ == "__main__":
     abs_path = os.path.dirname(os.path.abspath(__file__))
     train_it = train_datagen.flow_from_dataframe(df_train, directory=abs_path,
                                                  x_col='filename', y_col=pp.label_names,
-                                                 target_size=(800, 288),
-                                                 batch_size=256, class_mode='raw')
+                                                 target_size=(328, 118),
+                                                 batch_size=4, class_mode='raw')
     test_it = test_datagen.flow_from_dataframe(df_test, directory=abs_path,
                                                x_col='filename', y_col=pp.label_names,
-                                               target_size=(800, 288),
-                                               batch_size=256, class_mode='raw')
+                                               target_size=(328, 118),
+                                               batch_size=4, class_mode='raw')
 
-    model = models.vgg19_model()
+    model = models.test_model()
     history = model.fit(train_it, steps_per_epoch=len(train_it),
                         validation_data=test_it, validation_steps=len(test_it),
-                        epochs=epochs, verbose=1, use_multiprocessing=True,
-                        workers=multiprocessing.cpu_count(), callbacks=[telegram_callback])
+                        epochs=epochs, verbose=1)
     model.save('culane_model')
 
     loss, fbeta = model.evaluate(test_it, steps=len(test_it), verbose=1)
