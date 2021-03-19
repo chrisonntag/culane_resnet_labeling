@@ -44,7 +44,7 @@ opt-einsum==3.3.0
 packaging==20.4
 pandas==1.1.0
 partd==1.1.0
-Pillow==7.2.0
+Pillow==8.1.1
 pkg-resources==0.0.0
 protobuf==3.12.4
 psutil==5.7.2
